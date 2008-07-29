@@ -9,8 +9,6 @@ class KeySchedule
             0x0e, 0x06, 0x3d, 0x35, 0x2d, 0x25, 0x1d,
             0x15, 0x0d, 0x05, 0x1c, 0x14, 0x0c, 0x04]
   
-  PC_1 = PC_1_L + PC_1_R
-  
   PC_2 = [0x0e, 0x11, 0x0b, 0x18, 0x01, 0x05,
           0x03, 0x1c, 0x0f, 0x06, 0x15, 0x0a,
           0x17, 0x13, 0x0c, 0x04, 0x1a, 0x08,
@@ -24,8 +22,31 @@ class KeySchedule
                   1, 2, 2, 2, 2, 2, 2, 1]
   
   def self.create(key)
+    c = [] # c[0] is the PC_1_L permutation of the key, c[1..16] are the results of each left shift.
+    d = [] # d[0] is the PC_1_R permutation of the key, d[1..16] are the results of each left shift.
+    k = [] # k[0..15] are the sub keys created by combining c[i] with d[i] and permuting with PC_2.
     
+    # Get c[0] and d[0] by permuting the key with PC_1.
+    c << PC_1_L.collect{|p| key[p - 1]}
+    d << PC_1_R.collect{|p| key[p - 1]}
     
-    return sub_keys
+    # Generate 16 sub keys with left-wise rotations and PC_2.
+    16.times do |i|
+      
+      # Create two new arrays of bits from the current arrays of bits specified by i.
+      c << c[i]
+      d << d[i]
+      
+      # Rotate the new arrays of bits left one or two times.
+      ROTATIONS[i].times do
+        c[i + 1] << c[i + 1].shift
+        d[i + 1] << d[i + 1].shift
+      end
+      
+      # Combine the new arrays (c and d) and permute the result with PC_2.
+      k << PC_2.collect{|p| (c[i + 1] + d[i + 1])[p - 1]}
+    end
+
+    return k
   end
 end
