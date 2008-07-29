@@ -1,7 +1,7 @@
-$:.unshift('./ruby-des')
+$:.unshift(File.dirname(__FILE__))
 
-require 'feistel'
-require 'key_schedule'
+require 'ruby-des/feistel'
+require 'ruby-des/key_schedule'
 
 module RubyDES
   IP = [0x3a, 0x32, 0x2a, 0x22, 0x1a, 0x12, 0x0a, 0x02,

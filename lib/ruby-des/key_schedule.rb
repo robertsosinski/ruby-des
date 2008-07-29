@@ -1,4 +1,6 @@
 class KeySchedule
+  attr_accessor :sub_keys
+  
   PC_1_L = [0x39, 0x31, 0x29, 0x21, 0x19, 0x11, 0x09,
             0x01, 0x3a, 0x32, 0x2a, 0x22, 0x1a, 0x12,
             0x0a, 0x02, 0x3b, 0x33, 0x2b, 0x23, 0x1b,
@@ -21,7 +23,7 @@ class KeySchedule
   ROTATIONS = [1, 1, 2, 2, 2, 2, 2, 2,
                   1, 2, 2, 2, 2, 2, 2, 1]
   
-  def self.create(key)
+  def initialize(key)
     c = [] # c[0] is the PC_1_L permutation of the key, c[1..16] are the results of each left shift.
     d = [] # d[0] is the PC_1_R permutation of the key, d[1..16] are the results of each left shift.
     k = [] # k[0..15] are the sub keys created by combining c[i] with d[i] and permuting with PC_2.
@@ -47,6 +49,6 @@ class KeySchedule
       k << PC_2.collect{|p| (c[i + 1] + d[i + 1])[p - 1]}
     end
 
-    return k
+    self.sub_keys = k
   end
 end
