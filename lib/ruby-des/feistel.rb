@@ -57,7 +57,23 @@ module Feistel
         0x07, 0x0b, 0x04, 0x01, 0x09, 0x0c, 0x0e, 0x02, 0x00, 0x06, 0x0a, 0x0d, 0x0f, 0x03, 0x05, 0x08,
         0x02, 0x01, 0x0e, 0x07, 0x04, 0x0a, 0x08, 0x0d, 0x0f, 0x0c, 0x09, 0x00, 0x03, 0x05, 0x06, 0x0b]
     
-  def self.run(half_block, sub_key, round)
-    return output
+  def self.run(half_block, k, round)
+    e       = [] # e[0..47] is the expanded half block created with the E permutation.
+    e_xor_k = [] # e_xor_k[0..47] is the result of x-oring e with the current sub key.
+    b       = [] # b[0..7] is e_xor_k prepped as 8 6-bit arrays for sbox substitution.
+    
+    e << E.collect{|p| half_block[p - 1]}
+    
+    e_xor_k = XOR.run(e, k)
+    
+    8.times do |i|
+      b << []
+        6.times do 
+        b[i] << e_xor_k.shift
+      end
+    end
+    
+    row = (e_xor_k.shift + e_xor_k.pop).to_i
+    col = e_xor_k.to_s.to_i(2)
   end
 end

@@ -2,6 +2,7 @@ $:.unshift(File.dirname(__FILE__))
 
 require 'ruby-des/feistel'
 require 'ruby-des/key_schedule'
+require 'ruby-des/xor'
 
 module RubyDES
   IP_L = [0x3a, 0x32, 0x2a, 0x22, 0x1a, 0x12, 0x0a, 0x02,
@@ -62,7 +63,7 @@ module RubyDES
       
       16.times do |i|
         l << r[i]
-        r << XOR.run(Fiestel.run(r[i], k[i], i), l[i])
+        r << XOR.run(Feistel.run(r[i], k[i], i), l[i])
       end
       
       k << PC_2.collect{|p| (c[i + 1] + d[i + 1])[p - 1]}
