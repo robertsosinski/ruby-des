@@ -61,7 +61,7 @@ module Feistel
   
   # Some test data
   #
-  # hb = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1]
+  # half_block = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1]
   # k = [1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]
   
   def self.run(half_block, k)    
@@ -90,7 +90,7 @@ module Feistel
     b[5] = S6[m[5] + n[5]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[6] = S7[m[6] + n[6]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[7] = S8[m[7] + n[7]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
-    
-    return b
+      
+    return P.collect{|p| b.flatten[p - 1]}
   end
 end
