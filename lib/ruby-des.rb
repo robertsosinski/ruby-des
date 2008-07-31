@@ -32,31 +32,19 @@ module RubyDES
       @key   = key
     end
     
-    def encrypt
+    def run(mode)
       l = [] # l[0] is the IP_1_L permutation of the block, l[1..16] are the results of each round of encryption.
       r = [] # r[0] is the IP_1_R permutation of the block, r[1..16] are the results of each round of encryption.
       
       l << IP_L.collect{|p| block[p - 1]}
       r << IP_R.collect{|p| block[p - 1]}
       
-      k = KeySchedule.new(key).sub_keys
-      
-      16.times do |i|
-        l << r[i]
-        r << XOR.run(Feistel.run(r[i], k[i]), l[i])
+      case mode
+      when :encrypt
+        k = KeySchedule.new(key).sub_keys
+      when :decrypt
+        k = KeySchedule.new(key).sub_keys.reverse
       end
-      
-      return FP.collect{|p| (r.last + l.last)[p - 1]}
-    end
-    
-    def decrypt
-      l = [] # l[0] is the IP_1_L permutation of the block, l[1..16] are the results of each round of encryption.
-      r = [] # r[0] is the IP_1_R permutation of the block, r[1..16] are the results of each round of encryption.
-      
-      l << IP_L.collect{|p| block[p - 1]}
-      r << IP_R.collect{|p| block[p - 1]}
-      
-      k = KeySchedule.new(key).sub_keys.reverse
       
       16.times do |i|
         l << r[i]

@@ -31,24 +31,18 @@ class KeySchedule
     d = [] # d[0] is the PC_1_R permutation of the key, d[1..16] are the results of each left shift.
     k = [] # k[0..15] are the sub keys created by combining c[i] and d[i] and permuting with PC_2.
     
-    # Get c[0] and d[0] by permuting the key with PC_1_L and PC_1_R.
     c << PC_1_L.collect{|p| key[p - 1]}
     d << PC_1_R.collect{|p| key[p - 1]}
     
-    # Generate 16 sub keys with left-wise rotations and PC_2.
     16.times do |i|
-      
-      # Create two new arrays of bits from the previous arrays of bits.
       c << c[i]
       d << d[i]
       
-      # Rotate the new arrays of bits left one or two times.
       ROTATIONS[i].times do
         c[i + 1] << c[i + 1].shift
         d[i + 1] << d[i + 1].shift
       end
       
-       # Combine the new c and d arrays and permute the result with PC_2.
       k << PC_2.collect{|p| (c[i + 1] + d[i + 1])[p - 1]}
     end
     

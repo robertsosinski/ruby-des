@@ -62,25 +62,22 @@ module Feistel
     m = [] # m[0..7] is the row of the value when performing a s-box lookup.
     n = [] # n[0..7] is the column of the value when performing a s-box lookup.
     
-    # Expand the half block using E.
-    e = E.collect{|p| r[p - 1]}
+    e = E.collect{|p| r[p - 1]} # Expand r (right half block) using E.
     
-    # X-or the expanded half block with k (the sub key).
-    e_xor_k = XOR.run(e, k) 
+    e_xor_k = XOR.run(e, k) # X-or e (expanded r) with k (the sub key).
     
-    # Break e_xor_k into 8 6-bit arrays and find both m and m for the s-box lookup.
+    # Break e_xor_k into 8 6-bit arrays and find both m (s-box row) and m (s-box column) for the s-box lookup.
     8.times do |j|
       b << []
         6.times do 
         b[j] << e_xor_k.shift
       end
       
-      # If given the bit array [1, 0, 1, 0, 1, 0]
-      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # => [1, 0]
-      n << b[j][1..4].to_s.to_i(2) # => [0, 1, 0, 1]
+      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0]
+      n << b[j][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1]
     end
     
-    # Substitute every 6-bit array with a 4-bit array by using the correct s-box.
+    # Substitute every 6-bit array with the 4-bit array specified by the s-boxes.
     b[0] = S1[m[0] + n[0]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[1] = S2[m[1] + n[1]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[2] = S3[m[2] + n[2]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
@@ -90,7 +87,6 @@ module Feistel
     b[6] = S7[m[6] + n[6]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[7] = S8[m[7] + n[7]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     
-    # Permute the flattened array with P
     return P.collect{|p| b.flatten[p - 1]}
   end
 end
