@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class XORTest < Test::Unit::TestCase  
+class XORTest < Test::Unit::TestCase
   fixtures :xor
   
   def test_run

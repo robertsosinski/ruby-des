@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FeistelTest < Test::Unit::TestCase  
+class FeistelTest < Test::Unit::TestCase
   fixtures :feistel
   
   def test_run

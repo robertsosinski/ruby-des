@@ -56,32 +56,31 @@ module Feistel
         0x01, 0x0f, 0x0d, 0x08, 0x0a, 0x03, 0x07, 0x04, 0x0c, 0x05, 0x06, 0x0b, 0x00, 0x0e, 0x09, 0x02,
         0x07, 0x0b, 0x04, 0x01, 0x09, 0x0c, 0x0e, 0x02, 0x00, 0x06, 0x0a, 0x0d, 0x0f, 0x03, 0x05, 0x08,
         0x02, 0x01, 0x0e, 0x07, 0x04, 0x0a, 0x08, 0x0d, 0x0f, 0x0c, 0x09, 0x00, 0x03, 0x05, 0x06, 0x0b]
-        
-  S = [S1, S2, S3, S4, S5, S6, S7, S8]
   
-  # Some test data
-  #
-  # half_block = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1]
-  # k = [1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]
-  
-  def self.run(half_block, k)    
-    b       = [] # b[0..7] is e_xor_k prepped as 8 6-bit arrays for sbox substitution.
-    m       = [] # 
-    n       = []
+  def self.run(r, k)    
+    b = [] # b[0..7] is e_xor_k prepped as 8 6-bit arrays for sbox substitution.
+    m = [] # m[0..7] is the row of the value when performing a s-box lookup.
+    n = [] # n[0..7] is the column of the value when performing a s-box lookup.
     
-    e       = E.collect{|p| half_block[p - 1]}
-    e_xor_k = XOR.run(e, k)
+    # Expand the half block using E.
+    e = E.collect{|p| r[p - 1]}
     
-    8.times do |i|
+    # X-or the expanded half block with k (the sub key).
+    e_xor_k = XOR.run(e, k) 
+    
+    # Break e_xor_k into 8 6-bit arrays and find both m and m for the s-box lookup.
+    8.times do |j|
       b << []
         6.times do 
-        b[i] << e_xor_k.shift
+        b[j] << e_xor_k.shift
       end
       
-      m << (b[i].first.to_s + b[i].last.to_s).to_i(2) * 16
-      n << b[i][1..4].to_s.to_i(2)
+      # If given the bit array [1, 0, 1, 0, 1, 0]
+      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # => [1, 0]
+      n << b[j][1..4].to_s.to_i(2) # => [0, 1, 0, 1]
     end
     
+    # Substitute every 6-bit array with a 4-bit array by using the correct s-box.
     b[0] = S1[m[0] + n[0]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[1] = S2[m[1] + n[1]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[2] = S3[m[2] + n[2]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
@@ -90,7 +89,8 @@ module Feistel
     b[5] = S6[m[5] + n[5]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[6] = S7[m[6] + n[6]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     b[7] = S8[m[7] + n[7]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
-      
+    
+    # Permute the flattened array with P
     return P.collect{|p| b.flatten[p - 1]}
   end
 end

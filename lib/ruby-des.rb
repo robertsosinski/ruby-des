@@ -24,26 +24,6 @@ module RubyDES
         0x22, 0x02, 0x2a, 0x0a, 0x32, 0x12, 0x3a, 0x1a,
         0x21, 0x01, 0x29, 0x09, 0x31, 0x11, 0x39, 0x19]
   
-  # The 8-bit binary representation of "security"
-  TEST_MESSAGE = [0, 1, 1, 1, 0, 0, 1, 1,
-                  0, 1, 1, 0, 0, 1, 0, 1,
-                  0, 1, 1, 0, 0, 0, 1, 1,
-                  0, 1, 1, 1, 0, 1, 0, 1,
-                  0, 1, 1, 1, 0, 0, 1, 0,
-                  0, 1, 1, 0, 1, 0, 0, 1,
-                  0, 1, 1 ,1, 0, 1, 0, 0,
-                  0, 1, 1, 1, 1, 0, 0, 1]
-  
-  # The 7-bit binary representation of "ruby-des" with proper parity."
-  TEST_KEY = [1, 1, 1, 0, 0, 1, 0, 1,
-              1, 1, 1, 0, 1, 0, 1, 0,
-              1, 1, 0, 0, 0, 1, 0, 0,
-              1, 1, 1, 1, 0, 0, 1, 0,
-              0, 1, 0, 1, 1, 0, 1, 1,
-              1, 1, 0, 0, 1, 0, 0, 0,
-              1, 1, 0, 0, 1, 0, 1, 1,
-              1, 1, 1, 0, 0, 1, 1, 0]
-  
   class Ctx
     attr_reader :block, :key
     
@@ -63,16 +43,27 @@ module RubyDES
       
       16.times do |i|
         l << r[i]
-        r << XOR.run(Feistel.run(r[i], k[i], i), l[i])
+        r << XOR.run(Feistel.run(r[i], k[i]), l[i])
       end
       
-      k << PC_2.collect{|p| (c[i + 1] + d[i + 1])[p - 1]}
-      
-      output = FP.collect{|p| (l.last + r.last)[p - 1]}
+      return FP.collect{|p| (r.last + l.last)[p - 1]}
     end
     
     def decrypt
+      l = [] # l[0] is the IP_1_L permutation of the block, l[1..16] are the results of each round of encryption.
+      r = [] # r[0] is the IP_1_R permutation of the block, r[1..16] are the results of each round of encryption.
       
+      l << IP_L.collect{|p| block[p - 1]}
+      r << IP_R.collect{|p| block[p - 1]}
+      
+      k = KeySchedule.new(key).sub_keys.reverse
+      
+      16.times do |i|
+        l << r[i]
+        r << XOR.run(Feistel.run(r[i], k[i]), l[i])
+      end
+      
+      return FP.collect{|p| (r.last + l.last)[p - 1]}
     end
   end
 end
