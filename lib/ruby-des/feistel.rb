@@ -64,7 +64,7 @@ module Feistel
     m = [] # m[0..7] is the row of the value when performing a s-box lookup.
     n = [] # n[0..7] is the column of the value when performing a s-box lookup.
     
-    e = E.collect{|p| r[p - 1]} # Expand r (right half block) using E.
+    e = E.collect{|p| r[p - 1]} # Expand r (right half data block) using E.
     
     e_xor_k = XOR.run(e, k) # X-or e (expanded r) with k (the sub key).
     

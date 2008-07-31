@@ -1,0 +1,48 @@
+== Ruby-DES
+
+Ruby-DES is a full Ruby implementation of the Data Encryption Standard.  The purpose of this 
+project was to allow Ruby programmers interested in cryptography a glimpse of how a robust 
+cryptographic algorithm functions in a language they understand.
+
+NOTE: DES is deprecated, and as such, you should not use this implementation in any project you 
+plan on developing.  I highly recommend the AES, TwoFish or Serpent algorithms through the OpenSSL 
+library instead.
+
+== Running Ruby-DES
+
+Using RubyDES is pretty easy.  First, construct a new data and key block.
+
+  data = RubyDES::Block.new('hushhush')
+  key  = RubyDES::Block.new('password')
+
+Then, build a new <tt>RubyDES::Ctx</tt> object and supply the bit arrays for both the data and key 
+block.
+
+  des = RubyDES::Ctx.new(data.bit_array, key.bit_array)
+
+Finally, let it rip.
+
+  encrypted_data_bit_array = des.run(:encrypt)
+
+You will then be returned a DES encrypted bit array that is completely secure against eavesdropping 
+(if it were still 1997).
+
+To decrypt an encrypted array if bits, just build a new <tt>RubyDES::Ctx</tt> object in similar 
+fashion as before.
+
+  un_des = RubyDES::Ctx.new(encrypted_data_bit_array, key.bit_array)
+
+And run the DES with the key schedule reversed.
+
+  un_encrypted_data_bit_array = un_des.run(:decrypt)
+
+You can then check to see if it all worked.
+
+  data.bit_array.eql?(un_encrypted_data_bit_array)
+
+Enjoy!
+
+== Feedback
+
+If you have any questions, comments or just want to talk shop about crypto, feel free to reach me 
+through my website at http://www.robertsosinski.com

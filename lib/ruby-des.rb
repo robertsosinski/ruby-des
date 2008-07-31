@@ -25,19 +25,23 @@ module RubyDES
         0x21, 0x01, 0x29, 0x09, 0x31, 0x11, 0x39, 0x19]
   
   class Ctx
-    attr_reader :block, :key
+    attr_reader :data, :key
     
-    def initialize(block, key)
-      @block = block
-      @key   = key
+    def initialize(data, key)
+      unless data.is_a?(Array) and key.is_a?(Array) and data.size.eql?(64) and key.size.eql?(64)
+        raise "RubyDES::InvalidBlockFormat: data and key attributes must be passed bit arrays that are 64 bits in size"
+      end
+      
+      @data = data
+      @key  = key
     end
     
     def run(mode)
-      l = [] # l[0] is the IP_1_L permutation of the block, l[1..16] are the results of each round of encryption.
-      r = [] # r[0] is the IP_1_R permutation of the block, r[1..16] are the results of each round of encryption.
+      l = [] # l[0] is the IP_1_L permutation of the data block, l[1..16] are the results of each round of encryption.
+      r = [] # r[0] is the IP_1_R permutation of the data block, r[1..16] are the results of each round of encryption.
       
-      l << IP_L.collect{|p| block[p - 1]}
-      r << IP_R.collect{|p| block[p - 1]}
+      l << IP_L.collect{|p| data[p - 1]}
+      r << IP_R.collect{|p| data[p - 1]}
       
       case mode
       when :encrypt
@@ -52,6 +56,17 @@ module RubyDES
       end
       
       return FP.collect{|p| (r.last + l.last)[p - 1]}
+    end
+  end
+  
+  class Block
+    attr_reader :string, :bit_array
+    
+    def initialize(string)
+      raise "RubyDES::InvalidStringSize: input string must contain (8) characters" unless string.length.eql?(8)
+      
+      @string    = string
+      @bit_array = string.unpack('B*').join.split('').collect{|b| b.to_i}
     end
   end
 end
