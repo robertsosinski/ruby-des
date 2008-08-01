@@ -7,7 +7,7 @@ class KeyScheduleTest < Test::Unit::TestCase
     @key_schedule = KeySchedule.new(key_schedule(:test_key))
   end
   
-  def test_class    
+  def test_class
     assert_kind_of KeySchedule, @key_schedule
   end
   
