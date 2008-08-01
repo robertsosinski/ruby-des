@@ -15,34 +15,33 @@ Using RubyDES is pretty easy.  First, construct a new data and key block.
   data = RubyDES::Block.new('hushhush')
   key  = RubyDES::Block.new('password')
 
-Then, build a new <tt>RubyDES::Ctx</tt> object and supply the bit arrays for both the data and key 
-block.
+Then, build a new <tt>RubyDES::Ctx</tt> object and supply the data and key block.
 
-  des = RubyDES::Ctx.new(data.bit_array, key.bit_array)
+  des = RubyDES::Ctx.new(data, key)
 
 Finally, let it rip.
 
-  encrypted_data_bit_array = des.run(:encrypt)
+  encrypted_data = des.run(:encrypt)
 
-You will then be returned a DES encrypted bit array that is completely secure against eavesdropping 
+You will then be returned a DES encrypted block that is completely secure against eavesdropping 
 (if it were still 1997).
 
-To decrypt an encrypted array if bits, just build a new <tt>RubyDES::Ctx</tt> object in similar 
+To decrypt an encrypted data block, just build a new <tt>RubyDES::Ctx</tt> object in similar 
 fashion as before.
 
-  un_des = RubyDES::Ctx.new(encrypted_data_bit_array, key.bit_array)
+  un_des = RubyDES::Ctx.new(encrypted_data, key)
 
 And run the DES with the key schedule reversed.
 
-  un_encrypted_data_bit_array = un_des.run(:decrypt)
+  decrypted_data = un_des.run(:decrypt)
 
 You can then check to see if it all worked.
 
-  data.bit_array.eql?(un_encrypted_data_bit_array)
+  data.bit_array.eql?(decrypted_data.bit_array)
 
 Enjoy!
 
 == Feedback
 
 If you have any questions, comments or just want to talk shop about crypto, feel free to reach me 
-through my website at http://www.robertsosinski.com
+through my website at http://www.robertsosinski.com.

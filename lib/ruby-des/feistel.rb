@@ -75,8 +75,8 @@ module Feistel
         b[j] << e_xor_k.shift
       end
       
-      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0]
-      n << b[j][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1]
+      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0] => 2 => 32 => 3rd row.
+      n << b[j][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1] => 5 => 6th column.
     end
     
     # Substitute every 6-bit array with the 4-bit array specified by the appropriate s-box.

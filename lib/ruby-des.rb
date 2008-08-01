@@ -28,26 +28,26 @@ module RubyDES
     attr_reader :data, :key
     
     def initialize(data, key)
-      unless data.is_a?(Array) and key.is_a?(Array) and data.size.eql?(64) and key.size.eql?(64)
-        raise "RubyDES::InvalidBlockFormat: data and key attributes must be passed bit arrays that are 64 bits in size"
+      unless data.is_a?(RubyDES::Block) and key.is_a?(RubyDES::Block)
+        raise "RubyDES::InvalidBlockFormat: Data and key must be a Block object."
       end
       
       @data = data
       @key  = key
     end
     
-    def run(mode)
+    def run(operation)
       l = [] # l[0] is the IP_1_L permutation of the data block, l[1..16] are the results of each round of encryption.
       r = [] # r[0] is the IP_1_R permutation of the data block, r[1..16] are the results of each round of encryption.
       
-      l << IP_L.collect{|p| data[p - 1]}
-      r << IP_R.collect{|p| data[p - 1]}
+      l << IP_L.collect{|p| data.bit_array[p - 1]}
+      r << IP_R.collect{|p| data.bit_array[p - 1]}
       
-      case mode
+      case operation
       when :encrypt
-        k = KeySchedule.new(key).sub_keys
+        k = KeySchedule.new(key.bit_array).sub_keys
       when :decrypt
-        k = KeySchedule.new(key).sub_keys.reverse
+        k = KeySchedule.new(key.bit_array).sub_keys.reverse
       end
       
       16.times do |i|
@@ -55,18 +55,27 @@ module RubyDES
         r << XOR.run(Feistel.run(r[i], k[i]), l[i])
       end
       
-      return FP.collect{|p| (r.last + l.last)[p - 1]}
+      return RubyDES::Block.new(FP.collect{|p| (r.last + l.last)[p - 1]})
     end
   end
   
   class Block
     attr_reader :string, :bit_array
     
-    def initialize(string)
-      raise "RubyDES::InvalidStringSize: input string must contain (8) characters" unless string.length.eql?(8)
-      
-      @string    = string
-      @bit_array = string.unpack('B*').join.split('').collect{|b| b.to_i}
+    def initialize(input)
+      if input.is_a?(String)
+        raise "RubyDES::InvalidStringLength: Input Array must contain (8) characters." unless input.length.eql?(8)
+        
+        @string    = input
+        @bit_array = input.unpack('B*').join.split('').collect{|b| b.to_i}
+      elsif input.is_a?(Array)
+        raise "RubyDES::InvalidArraySize: Input Array must contain (64) bits." unless input.size.eql?(64)
+        
+        @string    = input.join.to_a.pack('B*')
+        @bit_array = input
+      else
+        raise "RubyDES::InvalidFormat: Input must be a String or an Array."
+      end
     end
   end
 end
