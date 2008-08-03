@@ -64,7 +64,7 @@ module RubyDES
     
     def initialize(input)
       if input.is_a?(String)
-        raise "RubyDES::InvalidStringLength: Input Array must contain (8) characters." unless input.length.eql?(8)
+        raise "RubyDES::InvalidStringLength: Input String must contain (8) characters." unless input.length.eql?(8)
         
         @string    = input
         @bit_array = input.unpack('B*').join.split('').collect{|b| b.to_i}
