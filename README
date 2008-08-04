@@ -24,7 +24,7 @@ Then, build a new <tt>RubyDES::Ctx</tt> object and supply the data and key block
 
 Finally, let it rip.
 
-  encrypted_data = des.run(:encrypt)
+  encrypted_data = des.encrypt
 
 You will then be returned a DES encrypted block that is completely secure against eavesdropping 
 (if it were still 1997).
@@ -36,7 +36,7 @@ fashion as before.
 
 And run the DES with the key schedule reversed.
 
-  decrypted_data = un_des.run(:decrypt)
+  decrypted_data = un_des.decrypt
 
 You can then check to see if it all worked.
 

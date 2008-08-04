@@ -36,6 +36,16 @@ module RubyDES
       @key  = key
     end
     
+    def encrypt
+      self.run(:encrypt)
+    end
+    
+    def decrypt
+      self.run(:decrypt)
+    end
+    
+    protected
+    
     def run(operation)
       l = [] # l[0] is the IP_1_L permutation of the data block, l[1..16] are the results of each round of encryption.
       r = [] # r[0] is the IP_1_R permutation of the data block, r[1..16] are the results of each round of encryption.
