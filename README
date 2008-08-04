@@ -4,8 +4,8 @@ Ruby-DES is a full Ruby implementation of the Data Encryption Standard.  The pur
 project was to allow Ruby programmers interested in cryptography a glimpse of how a robust 
 cryptographic algorithm functions in a language they understand.
 
-The best way to understand the RubyDES source code is by following along with a DES document, 
-which you can find at http://www.comms.scitech.susx.ac.uk/fft/crypto/des_algorithm_details.txt
+The best way to understand the RubyDES source code is by following along with a FIPS 46, 
+which you can find at http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf
 
 NOTE: DES is deprecated, and as such, you should not use this implementation in any project you 
 are developing.  I highly recommend the AES, TwoFish or Serpent algorithms through the OpenSSL 
