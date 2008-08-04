@@ -69,19 +69,19 @@ module Feistel
     e_xor_k = XOR.run(e, k) # X-or e (expanded r) with k (the sub key).
     
     # Break e_xor_k into 8 6-bit arrays and find both m (s-box row) and n (s-box column) for the s-box lookup.
-    8.times do |j|
+    8.times do |i|
       b << []
         6.times do 
-        b[j] << e_xor_k.shift
+        b[i] << e_xor_k.shift
       end
       
-      m << (b[j].first.to_s + b[j].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0] => 2 => 32 => 3rd row.
-      n << b[j][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1] => 5 => 6th column.
+      m << (b[i].first.to_s + b[i].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0] => 2 => 32 => 3rd row.
+      n << b[i][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1] => 5 => 6th column.
     end
     
     # Substitute every 6-bit array with the 4-bit array specified by the appropriate s-box.
-    8.times do |j|
-        b[j] = S[j][m[j] + n[j]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
+    8.times do |i|
+        b[i] = S[i][m[i] + n[i]].to_s(2).rjust(4, '0').split('').collect{|bit| bit.to_i}
     end
         
     return P.collect{|p| b.flatten[p - 1]}
