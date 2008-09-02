@@ -60,7 +60,7 @@ module Feistel
   S = [S1, S2, S3, S4, S5, S6, S7, S8]
   
   def self.run(r, k)    
-    b = [] # b[0..7] is e_xor_k prepped as 8 6-bit arrays for sbox substitution.
+    b = [] # b[0..7] is e_xor_k prepped as 8 6-bit arrays for s-box substitution.
     m = [] # m[0..7] is the row of the value when performing a s-box lookup.
     n = [] # n[0..7] is the column of the value when performing a s-box lookup.
     
@@ -75,8 +75,8 @@ module Feistel
         b[i] << e_xor_k.shift
       end
       
-      m << (b[i].first.to_s + b[i].last.to_s).to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0] => 2 => 32 => 3rd row.
-      n << b[i][1..4].to_s.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1] => 5 => 6th column.
+      m << [b[i].first, b[i].last].join.to_i(2) * 16 # [1, 0, 1, 0, 1, 0] => [1, 0] => 2 => 32 => 3rd row.
+      n << b[i][1..4].join.to_i(2) # [1, 0, 1, 0, 1, 0] => [0, 1, 0, 1] => 5 => 6th column.
     end
     
     # Substitute every 6-bit array with the 4-bit array specified by the appropriate s-box.
