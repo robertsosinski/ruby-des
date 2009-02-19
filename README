@@ -1,6 +1,6 @@
-== Ruby-DES
+== RubyDES
 
-Ruby-DES is a full Ruby implementation of the Data Encryption Standard.  The purpose of this 
+RubyDES is a full Ruby implementation of the Data Encryption Standard.  The purpose of this 
 project was to allow Ruby programmers interested in cryptography a glimpse of how a robust 
 cryptographic algorithm functions in a language they understand.
 
@@ -11,7 +11,7 @@ NOTE: DES is deprecated, and as such, you should not use this implementation in 
 are developing.  I highly recommend the AES, TwoFish or Serpent algorithms through the OpenSSL 
 library instead.
 
-== Running Ruby-DES
+== Running RubyDES
 
 Using RubyDES is pretty easy.  First, construct a new data and key block.
 
