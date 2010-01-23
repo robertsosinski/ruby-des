@@ -1,4 +1,5 @@
-== RubyDES
+RubyDES
+=======
 
 RubyDES is a full Ruby implementation of the Data Encryption Standard.  The purpose of this 
 project was to allow Ruby programmers interested in cryptography a glimpse of how a robust 
@@ -11,40 +12,42 @@ NOTE: DES is deprecated, and as such, you should not use this implementation in 
 are developing.  I highly recommend the AES, TwoFish or Serpent algorithms through the OpenSSL 
 library instead.
 
-== Running RubyDES
+Running RubyDES
+===============
 
 Using RubyDES is pretty easy.  First, construct a new data and key block.
 
-  data = RubyDES::Block.new('mysecret')
-  key  = RubyDES::Block.new('hushhush')
+    data = RubyDES::Block.new('mysecret')
+    key  = RubyDES::Block.new('hushhush')
 
-Then, build a new <tt>RubyDES::Ctx</tt> object and supply the data and key block.
+Then, build a new `RubyDES::Ctx` object and supply the data and key block.
 
-  des = RubyDES::Ctx.new(data, key)
+    des = RubyDES::Ctx.new(data, key)
 
-Finally, let it rip.
+Finally, let it go.
 
-  encrypted_data = des.encrypt
+    encrypted_data = des.encrypt
 
 You will then be returned a DES encrypted block that is completely secure against eavesdropping 
 (if it were still 1997).
 
-To decrypt an encrypted data block, just build a new <tt>RubyDES::Ctx</tt> object in similar 
+To decrypt an encrypted data block, just build a new `RubyDES::Ctx` object in similar 
 fashion as before.
 
-  un_des = RubyDES::Ctx.new(encrypted_data, key)
+    un_des = RubyDES::Ctx.new(encrypted_data, key)
 
 And run the DES with the key schedule reversed.
 
-  decrypted_data = un_des.decrypt
+    decrypted_data = un_des.decrypt
 
 You can then check to see if it all worked.
 
-  data.bit_array.eql?(decrypted_data.bit_array)
+    data.bit_array.eql?(decrypted_data.bit_array)
 
 Enjoy!
 
-== Feedback
+Feedback
+========
 
 If you have any questions, comments or just want to talk shop about crypto, feel free to reach me 
 through my website at http://www.robertsosinski.com.
